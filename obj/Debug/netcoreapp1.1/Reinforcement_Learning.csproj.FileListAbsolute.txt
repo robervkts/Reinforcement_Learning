@@ -1,0 +1,8 @@
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\bin\Debug\netcoreapp1.1\Reinforcement_Learning.deps.json
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\bin\Debug\netcoreapp1.1\Reinforcement_Learning.runtimeconfig.json
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\bin\Debug\netcoreapp1.1\Reinforcement_Learning.runtimeconfig.dev.json
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\bin\Debug\netcoreapp1.1\Reinforcement_Learning.dll
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\bin\Debug\netcoreapp1.1\Reinforcement_Learning.pdb
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\obj\Debug\netcoreapp1.1\Reinforcement_Learning.AssemblyInfo.cs
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\obj\Debug\netcoreapp1.1\Reinforcement_Learning.dll
+C:\Users\g\OneDrive\Gits\Reinforcement_Learning\obj\Debug\netcoreapp1.1\Reinforcement_Learning.pdb
