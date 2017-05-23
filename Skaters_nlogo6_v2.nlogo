@@ -9,7 +9,7 @@ to setup
   ;global variables
   set direction-value 0
   set direction-means array:from-list n-values number-of-angles [0]
-  set direction-pens   array:from-list n-values number-of-angles [0]
+  set direction-pens  array:from-list n-values number-of-angles [0]
 
   foreach (n-values number-of-angles [ i -> i ])
   [ x -> array:set direction-pens x (word ((360 / number-of-angles) * x))
@@ -224,6 +224,51 @@ number-of-angles
 number-of-angles
 1 2 3 4 5 6 8 9 10 12 15 18 20 24 30 36
 6
+
+SLIDER
+10
+245
+182
+278
+reward-1
+reward-1
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+10
+285
+182
+318
+reward-2
+reward-2
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+10
+330
+182
+363
+exploration
+exploration
+0
+1
+0.1
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
