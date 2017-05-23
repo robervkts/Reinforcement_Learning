@@ -1,14 +1,21 @@
 extensions [array]
 
 ;turtles-own [x1 y1];
-globals [direction-value direction-values]
+globals [direction-value direction-means direction-pens]
 
 to setup
   clear-all
   setup-turtles
   ;global variables
   set direction-value 0
-  set direction-values array:from-list n-values number-of-angles [0]
+  set direction-means array:from-list n-values number-of-angles [0]
+  set direction-pens   array:from-list n-values number-of-angles [0]
+
+  foreach (n-values number-of-angles [ i -> i ])
+  [ x -> array:set direction-pens x (word ((360 / number-of-angles) * x))
+    create-temporary-plot-pen (word ((360 / number-of-angles) * x))
+    set-plot-pen-color 5 + x * 10 ]
+
   reset-ticks
 end
 
@@ -39,8 +46,10 @@ end
 to one-step
   move-turtles
   calculate-angles
+  plot-angles
   tick
 end
+
 to move-turtles
   ask turtles [
 
@@ -55,18 +64,25 @@ to calculate-angles
   ask turtles
   [
      let index (heading * number-of-angles) / 360
-     array:set direction-values index ((array:item direction-values index) + 1)
+     array:set direction-means index ((array:item direction-means index) + 1)
   ]
+end
+
+to plot-angles
+  foreach (n-values number-of-angles [ i -> i ])
+  [ x -> set-current-plot-pen array:item direction-pens x
+    plot array:item direction-means x
+    ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-226
-17
+225
+15
 663
-455
+454
 -1
 -1
-13.0
+13.030303030303031
 1
 10
 1
@@ -80,17 +96,17 @@ GRAPHICS-WINDOW
 16
 -16
 16
-0
-0
+1
+1
 1
 ticks
 30.0
 
 BUTTON
-11
-16
-75
-49
+10
+15
+74
+48
 NIL
 Setup
 NIL
@@ -121,10 +137,10 @@ NIL
 1
 
 BUTTON
-149
-14
-212
-47
+150
+15
+213
+48
 NIL
 Go
 T
@@ -138,10 +154,10 @@ NIL
 1
 
 SLIDER
-11
-57
-183
-90
+10
+55
+185
+88
 number
 number
 1
@@ -153,10 +169,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-11
-142
-183
-175
+10
+145
+185
+178
 turtle-size
 turtle-size
 0.1
@@ -169,9 +185,9 @@ HORIZONTAL
 
 SLIDER
 10
-183
-182
-216
+185
+185
+218
 turtle-speed
 turtle-speed
 0.1
@@ -184,9 +200,9 @@ HORIZONTAL
 
 PLOT
 675
-18
-875
-168
+15
+1220
+455
 plot 1
 NIL
 NIL
@@ -195,20 +211,18 @@ NIL
 0.0
 10.0
 true
-false
+true
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot array:item direction-values 0"
-"pen-1" 1.0 0 -7500403 true "" "plot array:item direction-values 1"
 
 CHOOSER
-11
-94
-184
-139
+10
+95
+185
+140
 number-of-angles
 number-of-angles
-1 2 3 4 5 6 8 9 10 12 15 18 20 24 30 36 40 45 60 72 90 120 180
+1 2 3 4 5 6 8 9 10 12 15 18 20 24 30 36
 6
 
 @#$#@#$#@
@@ -570,5 +584,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+1
 @#$#@#$#@
