@@ -72,18 +72,16 @@ to move-turtles
 end
 
 to calculate-angles
-  ;let temp-direction-rewards-sum array:from-list n-values number-of-angles [0]
+  let temp-rewards-sum array:from-list n-values number-of-angles [0]
 
   ask turtles
   [
-    ;foreach (n-values number-of-angles [ i -> i ])
-    ;[ x -> (array:set temp-direction-rewards-sum x (array:item ) )
-    ;  ]
-
-    let index (heading * number-of-angles) / 360
-    array:set direction-means index ((array:item direction-means index) + 1)
-    ;array:set temp-direction-rewards-sum index ((array:item direction-means index) + 1)
+    foreach (n-values number-of-angles [ i -> i ])
+      [ x -> (array:set temp-rewards-sum x (array:item temp-rewards-sum x) + (array:item directions-reward x) ) ]
   ]
+
+  foreach (n-values number-of-angles [ i -> i ])
+    [ x -> (array:set direction-means x (array:item temp-rewards-sum x) / count turtles) ]
 end
 
 to plot-angles
