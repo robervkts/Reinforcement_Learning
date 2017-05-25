@@ -52,10 +52,50 @@ to go
 end
 
 to one-step
+  ;turtle behavior
+  choose-direction
   move-turtles
+  ;plots
   calculate-angles
   plot-angles
   tick
+end
+
+to choose-direction
+  ask turtles [
+    ifelse (random-float 1 > exploration)
+    [ ;exploid (direction based on propensity rewards)
+
+      ;calculate sum of rewards
+      let reward-sum 0
+      foreach (n-values number-of-angles [ i -> i ])
+      [ x -> set reward-sum reward-sum + array:item directions-reward x
+        ]
+
+      ;calculate probabilities per angle based on rewards
+      let directions-prob array:from-list n-values number-of-angles [0]
+      foreach (n-values number-of-angles [ i -> i ])
+      [ x -> array:set directions-prob x (array:item directions-reward x / reward-sum)
+        ]
+
+      ;check which direction it will be
+      let dir-value random-float 1
+      let dir-probability 0
+      let dir-new -1
+      foreach (n-values number-of-angles [ i -> i ])
+      [ x -> set dir-probability (dir-probability + array:item directions-prob x)
+        if (dir-value < dir-probability) and (dir-new = -1)
+          [ set dir-new x ]
+        ]
+
+      ;set direction
+      ifelse (dir-new > -1)
+        [ set heading (360 / number-of-angles) * dir-new ]
+        [ output-print("ERROR dir-new = -1") ]
+    ]
+    [ set heading (360 / number-of-angles) * floor(random(number-of-angles)) ] ;explore (random direction)
+    set head-i (heading * number-of-angles) / 360
+  ]
 end
 
 to move-turtles
@@ -64,9 +104,7 @@ to move-turtles
    forward turtle-speed
    ifelse (count turtles-here > 1)
      [ back turtle-speed
-       array:set directions-reward head-i (array:item directions-reward head-i) + reward-stop
-       set heading (360 / number-of-angles) * floor(random(number-of-angles))
-       set head-i (heading * number-of-angles) / 360 ]
+       array:set directions-reward head-i (array:item directions-reward head-i) + reward-stop ]
      [ array:set directions-reward head-i (array:item directions-reward head-i) + reward-move ]
   ]
 end
@@ -250,7 +288,7 @@ reward-move
 reward-move
 0
 100
-50.0
+100.0
 1
 1
 NIL
@@ -265,7 +303,7 @@ reward-stop
 reward-stop
 0
 100
-11.0
+0.0
 1
 1
 NIL
@@ -280,7 +318,7 @@ exploration
 exploration
 0
 1
-0.1
+0.0
 0.01
 1
 NIL
@@ -293,10 +331,10 @@ SLIDER
 398
 base-reward
 base-reward
-0
+100
 10000
-1000.0
-500
+100.0
+100
 1
 NIL
 HORIZONTAL
