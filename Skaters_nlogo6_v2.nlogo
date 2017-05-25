@@ -1,6 +1,6 @@
 extensions [array]
 
-;turtles-own [x1 y1];
+turtles-own [directions-reward head-i];
 globals [direction-value direction-means direction-pens]
 
 to setup
@@ -11,6 +11,8 @@ to setup
   set direction-means array:from-list n-values number-of-angles [0]
   set direction-pens  array:from-list n-values number-of-angles [0]
 
+  ;do plotting stuff
+  set-current-plot "plot 1"
   foreach (n-values number-of-angles [ i -> i ])
   [ x -> array:set direction-pens x (word ((360 / number-of-angles) * x))
     create-temporary-plot-pen (word ((360 / number-of-angles) * x))
@@ -23,8 +25,14 @@ to setup-turtles
   create-turtles number
   ask turtles [
     setxy random-xcor random-ycor
-    set heading (360 / number-of-angles) * floor(random(number-of-angles))
     set size turtle-size
+
+    ; set direction
+    set heading (360 / number-of-angles) * floor(random(number-of-angles))
+    set head-i (heading * number-of-angles) / 360
+
+    set directions-reward array:from-list n-values number-of-angles [base-reward]
+
     ;move turtles that spawned on top of each other
     if (count turtles-here > 1)
     [ forward turtle-speed ]
@@ -54,17 +62,27 @@ to move-turtles
   ask turtles [
 
    forward turtle-speed
-   if (count turtles-here > 1)
-   [ back turtle-speed
-     set heading (360 / number-of-angles) * floor(random(number-of-angles)) ]
+   ifelse (count turtles-here > 1)
+     [ back turtle-speed
+       array:set directions-reward head-i (array:item directions-reward head-i) + reward-stop
+       set heading (360 / number-of-angles) * floor(random(number-of-angles))
+       set head-i (heading * number-of-angles) / 360 ]
+     [ array:set directions-reward head-i (array:item directions-reward head-i) + reward-move ]
   ]
 end
 
 to calculate-angles
+  ;let temp-direction-rewards-sum array:from-list n-values number-of-angles [0]
+
   ask turtles
   [
-     let index (heading * number-of-angles) / 360
-     array:set direction-means index ((array:item direction-means index) + 1)
+    ;foreach (n-values number-of-angles [ i -> i ])
+    ;[ x -> (array:set temp-direction-rewards-sum x (array:item ) )
+    ;  ]
+
+    let index (heading * number-of-angles) / 360
+    array:set direction-means index ((array:item direction-means index) + 1)
+    ;array:set temp-direction-rewards-sum index ((array:item direction-means index) + 1)
   ]
 end
 
@@ -228,10 +246,10 @@ number-of-angles
 SLIDER
 10
 245
-182
+185
 278
-reward-1
-reward-1
+reward-move
+reward-move
 0
 100
 50.0
@@ -243,13 +261,13 @@ HORIZONTAL
 SLIDER
 10
 285
-182
+185
 318
-reward-2
-reward-2
+reward-stop
+reward-stop
 0
 100
-50.0
+11.0
 1
 1
 NIL
@@ -257,15 +275,30 @@ HORIZONTAL
 
 SLIDER
 10
-330
-182
-363
+325
+185
+358
 exploration
 exploration
 0
 1
 0.1
 0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+10
+365
+185
+398
+base-reward
+base-reward
+0
+10000
+1000.0
+500
 1
 NIL
 HORIZONTAL
