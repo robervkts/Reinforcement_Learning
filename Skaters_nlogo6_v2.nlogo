@@ -26,6 +26,7 @@ to setup-turtles
   ask turtles [
     setxy random-xcor random-ycor
     set size turtle-size
+    ;set shape "circle"
 
     ; set direction
     set heading (360 / number-of-angles) * floor(random(number-of-angles))
@@ -34,8 +35,20 @@ to setup-turtles
     set directions-reward array:from-list n-values number-of-angles [base-reward]
 
     ;move turtles that spawned on top of each other
-    if (count turtles-here > 1)
-    [ forward turtle-speed ]
+    let collided true
+
+    while [collided]
+    [
+      set collided false
+      ask other turtles [
+        let d DISTANCE myself
+        if (d < (turtle-size))
+          [ set collided true ]
+      ]
+      if (collided) [
+        setxy random-xcor random-ycor
+      ]
+    ]
   ]
 end
 
@@ -57,7 +70,7 @@ to one-step
   move-turtles
   ;plots
   calculate-angles
-  plot-angles
+  plot-angles-average
   tick
 end
 
@@ -99,13 +112,33 @@ to choose-direction
 end
 
 to move-turtles
+
+  ;let array-x array:from-list n-values (count turtles) [0]
+  ;let array-y array:from-list n-values (count turtles) [0]
+
+  ;let i 0
+  ;ask turtles [
+  ;  array:set array-x i xcor
+  ;  array:set array-y i xcor
+  ;  set i (i + 1)
+  ;]
+
   ask turtles [
 
-   forward turtle-speed
-   ifelse (count turtles-here > 1)
-     [ back turtle-speed
-       array:set directions-reward head-i (array:item directions-reward head-i) + reward-stop ]
-     [ array:set directions-reward head-i (array:item directions-reward head-i) + reward-move ]
+    forward turtle-speed
+
+    let collision false
+
+    ask other turtles [
+      let d DISTANCE myself
+      if (d < (turtle-size))
+        [ set collision true ]
+    ]
+
+    ifelse (collision)
+    [ back turtle-speed
+      array:set directions-reward head-i (array:item directions-reward head-i) + reward-stop ]
+    [ array:set directions-reward head-i (array:item directions-reward head-i) + reward-move ]
   ]
 end
 
@@ -127,6 +160,19 @@ to plot-angles
   [ x -> set-current-plot-pen array:item direction-pens x
     plot array:item direction-means x
     ]
+end
+
+to plot-angles-average
+  let avg 0
+  foreach (n-values number-of-angles [ i -> i ])
+  [ x -> set-current-plot-pen array:item direction-pens x
+   set avg (avg + array:item direction-means x)
+   ]
+
+  foreach (n-values number-of-angles [ i -> i ])
+  [ x -> set-current-plot-pen array:item direction-pens x
+   plot array:item direction-means x / avg
+   ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -215,9 +261,9 @@ SLIDER
 number
 number
 1
-100
-50.0
-1
+600
+300.0
+25
 1
 NIL
 HORIZONTAL
@@ -244,10 +290,10 @@ SLIDER
 218
 turtle-speed
 turtle-speed
-0.1
+0.01
 2
-1.0
-0.1
+0.25
+0.01
 1
 NIL
 HORIZONTAL
@@ -261,9 +307,9 @@ plot 1
 NIL
 NIL
 0.0
-10.0
 0.0
-10.0
+0.0
+0.0
 true
 true
 "" ""
